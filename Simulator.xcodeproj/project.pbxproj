@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		7F14320527D16D900083C953 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14320427D16D900083C953 /* main.cpp */; };
+		7F14321927D16DDC0083C953 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14320B27D16DDA0083C953 /* Node.cpp */; };
+		7F14321A27D16DDC0083C953 /* Probability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14320C27D16DDA0083C953 /* Probability.cpp */; };
+		7F14321B27D16DDC0083C953 /* CognateSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14320D27D16DDA0083C953 /* CognateSet.cpp */; };
+		7F14321C27D16DDC0083C953 /* CharMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14320E27D16DDA0083C953 /* CharMatrix.cpp */; };
+		7F14321D27D16DDC0083C953 /* RandomVariable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14321027D16DDA0083C953 /* RandomVariable.cpp */; };
+		7F14321E27D16DDC0083C953 /* Tree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14321127D16DDB0083C953 /* Tree.cpp */; };
+		7F14321F27D16DDC0083C953 /* Msg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F14321727D16DDC0083C953 /* Msg.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +32,20 @@
 /* Begin PBXFileReference section */
 		7F14320127D16D900083C953 /* Simulator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Simulator; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F14320427D16D900083C953 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		7F14320B27D16DDA0083C953 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
+		7F14320C27D16DDA0083C953 /* Probability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Probability.cpp; sourceTree = "<group>"; };
+		7F14320D27D16DDA0083C953 /* CognateSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CognateSet.cpp; sourceTree = "<group>"; };
+		7F14320E27D16DDA0083C953 /* CharMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CharMatrix.cpp; sourceTree = "<group>"; };
+		7F14320F27D16DDA0083C953 /* Probability.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Probability.hpp; sourceTree = "<group>"; };
+		7F14321027D16DDA0083C953 /* RandomVariable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomVariable.cpp; sourceTree = "<group>"; };
+		7F14321127D16DDB0083C953 /* Tree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tree.cpp; sourceTree = "<group>"; };
+		7F14321227D16DDB0083C953 /* Msg.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Msg.hpp; sourceTree = "<group>"; };
+		7F14321327D16DDB0083C953 /* CognateSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CognateSet.hpp; sourceTree = "<group>"; };
+		7F14321427D16DDB0083C953 /* Tree.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Tree.hpp; sourceTree = "<group>"; };
+		7F14321527D16DDB0083C953 /* CharMatrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CharMatrix.hpp; sourceTree = "<group>"; };
+		7F14321627D16DDB0083C953 /* RandomVariable.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = RandomVariable.hpp; sourceTree = "<group>"; };
+		7F14321727D16DDC0083C953 /* Msg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Msg.cpp; sourceTree = "<group>"; };
+		7F14321827D16DDC0083C953 /* Node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +79,20 @@
 			isa = PBXGroup;
 			children = (
 				7F14320427D16D900083C953 /* main.cpp */,
+				7F14320E27D16DDA0083C953 /* CharMatrix.cpp */,
+				7F14321527D16DDB0083C953 /* CharMatrix.hpp */,
+				7F14320D27D16DDA0083C953 /* CognateSet.cpp */,
+				7F14321327D16DDB0083C953 /* CognateSet.hpp */,
+				7F14321727D16DDC0083C953 /* Msg.cpp */,
+				7F14321227D16DDB0083C953 /* Msg.hpp */,
+				7F14320B27D16DDA0083C953 /* Node.cpp */,
+				7F14321827D16DDC0083C953 /* Node.hpp */,
+				7F14320C27D16DDA0083C953 /* Probability.cpp */,
+				7F14320F27D16DDA0083C953 /* Probability.hpp */,
+				7F14321027D16DDA0083C953 /* RandomVariable.cpp */,
+				7F14321627D16DDB0083C953 /* RandomVariable.hpp */,
+				7F14321127D16DDB0083C953 /* Tree.cpp */,
+				7F14321427D16DDB0083C953 /* Tree.hpp */,
 			);
 			path = Simulator;
 			sourceTree = "<group>";
@@ -118,7 +153,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F14321C27D16DDC0083C953 /* CharMatrix.cpp in Sources */,
+				7F14321B27D16DDC0083C953 /* CognateSet.cpp in Sources */,
+				7F14321D27D16DDC0083C953 /* RandomVariable.cpp in Sources */,
+				7F14321E27D16DDC0083C953 /* Tree.cpp in Sources */,
 				7F14320527D16D900083C953 /* main.cpp in Sources */,
+				7F14321A27D16DDC0083C953 /* Probability.cpp in Sources */,
+				7F14321927D16DDC0083C953 /* Node.cpp in Sources */,
+				7F14321F27D16DDC0083C953 /* Msg.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
