@@ -38,13 +38,9 @@ int main(int argc, const char * argv[]) {
     //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
     
     std::vector<double> freqs = {0.5, 0.5};
-    std::string modelName = "JC69";
+    std::string modelName = "";
     
     double** q = makeRateMatrix();
-    //std::cout << lambda << " " << mu << std::endl;
-    std::cout << freqs[0] << " " << freqs[1] << std::endl;
-    std::cout << q[0][0] << " " << q[0][1] << std::endl;
-    std::cout << q[1][0] << " " << q[1][1] << std::endl;
     
     std::vector<Tree*> trees;
     Tree* exTree = NULL;
