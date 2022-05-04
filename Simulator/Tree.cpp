@@ -248,7 +248,6 @@ Tree::Tree(double lambda, double mu, double t) {
     
 }
 
-
 Tree::~Tree(void) {
     for (int i = 0; i < (int)nodes.size(); i++)
         delete nodes[i];
@@ -820,4 +819,138 @@ Node* Tree::getNodeByIdx(int idx) {
             return n;
     }
     return NULL;
+}
+
+
+/*
+    Adding external borrowing events
+    t: source external tree
+ 
+ */
+
+void Tree::addSharingEvents(RandomVariable* rng, Tree* t, double rate, std::vector<Node*>& sourceNodes) {
+    
+    //std::cout << "sourceTree node length (before): " << t.getNodeLength() << std::endl;
+    
+    // insert nodes into tree at source points
+            
+    for (Node* n : t->getDownPassSequence()) {
+
+        Node* nAncs = n->getAncestor();
+        
+        if (nAncs != NULL) {
+            double v = nAncs->getTime();
+            double len = n->getBrLen()+v;
+            
+            while (v < len) {
+                
+                nAncs = n->getAncestor();
+                
+                v += -log(rng->uniformRv())/rate;
+                
+                if (v < len) {
+                
+                    Node* p = t->addNode();
+                    p->setTime(v);
+                    //std::cout << p->getTime() << std::endl;
+                    sourceNodes.push_back(p);
+                                        
+                    nAncs->addDescendant(p);
+                    p->addDescendant(n);
+                    nAncs->removeDescendant(n);
+                    n->setAncestor(p);
+                    p->setAncestor(nAncs);
+                                            
+                    Node* d = NULL;
+                    p->setDest(d);
+                }
+            }
+        }
+    }
+    
+    t->initializeDownPassSequence();
+    
+    
+    //std::cout << "sourceTree node length (after): " << t.getNodeLength() << std::endl;
+    //std::cout << "source node size: " << sourceNodes.size() << std::endl;
+    
+    // add destination nodes to tree
+    
+    
+    
+    for (Node* n : sourceNodes) {
+        t->reindex();
+        double nTime = n->getTime();
+        std::vector<Node*> activeNodes = nodesAtTime(nTime);
+        std::vector<Node*>::iterator it = find(activeNodes.begin(), activeNodes.end(), n);
+        if (it != activeNodes.end())
+            Msg::error("Found n " + std::to_string(n->getIndex()) +  " in list! (Not good!)");
+        //std::cout << "size of activeNodes: " << activeNodes.size() << std::endl;
+        //if (activeNodes.size() == 1)
+          //  std::cout << "n's index is " << n->getIndex() << " and time is: " << nTime << std::endl;
+                
+        if (activeNodes.size() > 0) {
+        
+            Node* d = NULL;
+                                                
+            d = activeNodes[(int)(rng->uniformRv()*activeNodes.size())];
+            
+            if (d == NULL)
+                Msg::error("Why the hell is d NULL?!");
+            
+            Node* dAncs = d->getAncestor();
+            
+            if (dAncs == NULL)
+                Msg::error("Why the hell is dAncs NULL?!");
+            
+            Node* dest = addNode();
+            dest->setTime(nTime);
+            
+            d->setAncestor(dest);
+            dest->setAncestor(dAncs);
+            dAncs->removeDescendant(d);
+            dAncs->addDescendant(dest);
+            dest->addDescendant(d);
+            
+            dest->setSource(n);
+            n->setDest(dest);
+            //std::cout << "destination is: " << dest << std::endl;
+            
+            initializeDownPassSequence();
+            //std::cout << "source: " << n->getIndex() << " " << n->getTime() << ", dest: " << d->getIndex() << std::endl;
+            
+        }
+        
+    }
+                    
+
+    
+    // initialize branch lengths from time
+    
+    for (Node* n : downPassSequence) {
+        
+        Node* nAncs = n->getAncestor();
+        if (nAncs != NULL)
+            n->setBrLen(n->getTime()-nAncs->getTime());
+        else
+            n->setBrLen(0.0);
+            
+    }
+    
+    for (Node* n : t->getDownPassSequence()) {
+        
+        Node* nAncs = n->getAncestor();
+        if (nAncs != NULL)
+            n->setBrLen(n->getTime()-nAncs->getTime());
+        else
+            n->setBrLen(0.0);
+            
+    }
+    
+    reindex();
+    t->reindex();
+    //print();
+    
+    
+    
 }
