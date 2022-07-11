@@ -16,7 +16,7 @@
 #include "Node.hpp"
 double** makeRateMatrix(void);
 double** makeDolloRateMatrix(std::vector<double> bf);
-std::vector<double> makeDolloBaseFreq(double lambda, double mu);
+//std::vector<double> makeDolloBaseFreq(double lambda, double mu);
 
 int main(int argc, const char * argv[]) {
     
@@ -31,14 +31,20 @@ int main(int argc, const char * argv[]) {
     // numcognates" + std::to_string(numCognates) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr-delta.nex", std::ofstream::out);
     
     double expectedNumberOfTips = 20.0;
-    double turnoverRate = 0.1; // mu over lambda
+    
+    
+    for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
+    
+    //double turnoverRate = 0.1; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
     double lambda = mu + diversificationRate;
-    //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
-    
-    std::vector<double> freqs = {0.5, 0.5};
-    std::string modelName = "";
+    double sharingRate = 0.4;
+    double ratio = 0.0;
+        //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
+    // std::vector<double>
+    double arrayOfFreqs [5][2] = {{0.5, 0.5}, {0.6, 0.4}, {0.7, 0.3}, {0.8, 0.2}, {0.9, 0.1}};
+    std::string modelName = "sd";
     
     double** q = makeRateMatrix();
     
@@ -61,14 +67,17 @@ int main(int argc, const char * argv[]) {
             delete t;
     }
     
-    for (double sharingRate = 0.0; sharingRate <= 1.0; sharingRate += 0.2) {
-        
-        for (double ratio = 0.0; ratio <= 1.0; ratio += 0.2) {
     
+        
+        for (int i = 0; i < 5;  i++) {
+    
+            std::vector<double> freqs = {arrayOfFreqs[i][0], arrayOfFreqs[i][1]};
+            std::cout << std::to_string(freqs[0]) << ", " << std::to_string(freqs[0]) << std::endl;
+            
     //std::map<Tree*, CharMatrix*> simulatedMatrices;
                     
-            std::ofstream fw("/Users/edwinko/Downloads/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr" + std::to_string(sharingRate) + "-srRatio" + std::to_string(ratio)  + "-delta.nex", std::ios::out);
-            std::ofstream gw("/Users/edwinko/Downloads/" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr" + std::to_string(sharingRate) + "-srRatio" + std::to_string(ratio) + "-delta.nex", std::ios::out);
+            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr" + std::to_string(sharingRate) + "-srRatio" + std::to_string(ratio)  + "-delta.nex", std::ios::out);
+            std::ofstream gw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr" + std::to_string(sharingRate) + "-srRatio" + std::to_string(ratio) + "-delta.nex", std::ios::out);
                               
                 for (double delta = -10.0; delta <= 10.1; delta += 2) {
                     
@@ -111,14 +120,19 @@ int main(int argc, const char * argv[]) {
                     fw << "deroot;\n";
                     fw << "savetrees file=/Users/edwinko/Downloads/temp.nex replace=yes format=altnex;\n";
                     fw << "set criterion=parsimony;\n";
-                    fw << "hsearch;\n";
+                    if (freqs[0] == 0.9)
+                        fw << "hsearch swap=none;\n";
+                    else
+                        fw << "hsearch swap;\n";
                     fw << "savetrees file=/Users/edwinko/Downloads/temp.nex format=altnex append=yes;\n";
                     fw << "gettrees file=/Users/edwinko/Downloads/temp.nex allBlocks=yes;\n";
+                    
                     if (count == 1)
-                                                                        
                         fw << std::fixed << std::setprecision(2) << "treedist reftree=1 file=/Users/edwinko/Downloads/" + modelName +  "_treedist_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio << "_delta" << delta << ".txt replace=yes;\n";
+                        
                     else
                         fw << std::fixed << std::setprecision(2) << "treedist reftree=1 file=/Users/edwinko/Downloads/" + modelName +  "_treedist_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio << "_delta" << delta << ".txt append=yes;\n";
+                    
                     fw << "end;\n";
                                 
                     gw << cm->getString();
@@ -134,6 +148,7 @@ int main(int argc, const char * argv[]) {
                     gw << "lscores 1;\n";
                                             
                     if (count == 1)
+                        
                         gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio <<  "_delta" << delta << ".txt replace=yes format=altnex brLens=yes ;\n";
                     else
                         gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio << "_delta" << delta << ".txt append=yes format=altnex brLens=yes ;\n";
@@ -148,7 +163,7 @@ int main(int argc, const char * argv[]) {
                 }
                 fw.close();
                 gw.close();
-            }
+             }
         }
     return 0;
 }
@@ -197,7 +212,7 @@ double** makeRateMatrix (void) {
  
  */
 
-
+/*
 std::vector<double> makeDolloBaseFreq(double r10, double r01) {
     //double vocab = lambda / mu;
     //double L = 10 * round(vocab);
@@ -207,7 +222,7 @@ std::vector<double> makeDolloBaseFreq(double r10, double r01) {
     freqs[0] = r10/(r10 + r01);
     freqs[1] = r01/(r10 + r01);
     return freqs;
-}
+}*/
 
 /*
     Corresponding MATLAB code:
