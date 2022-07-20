@@ -204,6 +204,10 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     
 CharMatrix::CharMatrix(Tree* destTree, Tree* sourceTree, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double ratio, double delta) {
             
+    double expectedNumChanges = 2.0;
+    double subtreeLength = destTree->rescale();
+    double rateFactor = expectedNumChanges/subtreeLength;
+    
     RandomVariable& rng = RandomVariable::randomVariableInstance();
     
     double exSharingRate = sharingRate * ratio;
@@ -258,7 +262,7 @@ CharMatrix::CharMatrix(Tree* destTree, Tree* sourceTree, double** q, int ns, std
             for (int c = 0; c < numChar; c++) {
                 
                 int currState = (*p->getAncestor()->getCognateSet())[c];
-                double len = p->getTime() - p->getAncestor()->getTime();
+                double len = (p->getTime() - p->getAncestor()->getTime()) * rateFactor;
                                 
                 double v = 0.0;
                 

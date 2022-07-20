@@ -33,6 +33,7 @@ public:
     int getNumTaxa(void) {return numTaxa;}
     void setNumTaxa(int n) { numTaxa = n;}
     std::string getNewickString(void);
+    double rescale(void);
     double findDistance(Node* p, Node* q);
     Node* getNodeByIdx(int idx);
     double getMaxTime(void) {return time;}
@@ -52,7 +53,6 @@ private:
     int numTaxa;
     void writeTree(Node* n, std::stringstream&);
     void markNodesForPrinting(void);
-    void rescale(void);
     double getLength(Node* p);
     int numMarkedDescendants(Node* p);
 };

@@ -245,7 +245,7 @@ Tree::Tree(double lambda, double mu, double t) {
             p->setIndex(idx++);
     }
             
-    rescale();
+    //rescale();
     
 }
 
@@ -716,7 +716,7 @@ void Tree::markNodesForPrinting(void) {
     }
 }
 
-void Tree::rescale(void) {
+double Tree::rescale(void) {
     
     for (Node* n : downPassSequence) {
         n->setRescale(false);
@@ -755,8 +755,10 @@ void Tree::rescale(void) {
         if (p->getRescale() == true)
             subtreeLength += p->getBrLen();        
     }
-        
-    if (newRoot != NULL) {
+    
+    return subtreeLength;
+    
+    /*if (newRoot != NULL) {
         root = newRoot;
         root->setAncestor(NULL);
         double min = root->getTime();
@@ -768,7 +770,7 @@ void Tree::rescale(void) {
             p->setTime( (p->getTime()-min) /(1.0-min) );
             p->setBrLen( p->getBrLen() * (3/subtreeLength));
         }
-    }
+    }*/
     
 }
 
