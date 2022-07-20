@@ -187,16 +187,22 @@ Tree::Tree(double lambda, double mu, double t) {
     
     double currentTime = 0.0;
     while (currentTime < time && activeNodes.size() > 0) {
-        
+                
         double rate = activeNodes.size() * (lambda + mu);
         currentTime += -log(rv.uniformRv()) / rate;
+        
+        std::cout << "rate: " << rate << ", currentTime: " << currentTime << std::endl;
         
         if (currentTime < time) {
             
             int whichNode = (int)(rv.uniformRv()*activeNodes.size());
             p = activeNodes[whichNode];
             p->setTime(currentTime);
+            
+            
             if (rv.uniformRv() < lambda / (lambda+mu)) { // speciation
+                
+                std::cout << "speciation" << std::endl;
                 
                 Node* q = addNode(-1);
                 r = addNode(-1);
@@ -210,12 +216,15 @@ Tree::Tree(double lambda, double mu, double t) {
                 
             } else { // extinction
                 
+                std::cout << "extinction" << std::endl;
+                
                 // replace current node p with last node in array then pop last node from array
                 activeNodes[whichNode] = activeNodes[activeNodes.size()-1];
                 activeNodes.pop_back();
                 
                 
             }
+            
         }
     }
     
@@ -756,16 +765,17 @@ void Tree::rescale(void) {
         
     }
             
-    //root = newRoot;
-    //root->setAncestor(NULL);
-    //double min = root->getTime();
+    root = newRoot;
+    root->setAncestor(NULL);
+    double min = root->getTime();
     
-    //initializeDownPassSequence();
-    //reindex();
+    initializeDownPassSequence();
+    reindex();
     
-    //for (Node* p : downPassSequence) {
-      //  p->setTime( (p->getTime()-min) /(1.0-min) );
-    //}
+    for (Node* p : downPassSequence) {
+        p->setTime( (p->getTime()-min) /(1.0-min) );
+        p->setBrLen( p->getBrLen() * (3/subtreeLength));
+    }
     
 }
 

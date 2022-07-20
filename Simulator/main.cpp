@@ -33,17 +33,21 @@ int main(int argc, const char * argv[]) {
     double expectedNumberOfTips = 20.0;
     
     
-    for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
+    //for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
     
-    //double turnoverRate = 0.1; // mu over lambda
+    double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
     double lambda = mu + diversificationRate;
     double sharingRate = 0.4;
+    
+    std::cout << "lambda: " << lambda << ", mu: " << mu << std::endl;
+    
     double ratio = 0.0;
-        //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
+    
+    //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
     // std::vector<double>
-    double arrayOfFreqs [5][2] = {{0.5, 0.5}, {0.6, 0.4}, {0.7, 0.3}, {0.8, 0.2}, {0.9, 0.1}};
+    //double arrayOfFreqs [5][2] = {{0.5, 0.5}, {0.6, 0.4}, {0.7, 0.3}, {0.8, 0.2}, {0.9, 0.1}};
     std::string modelName = "sd";
     
     double** q = makeRateMatrix();
@@ -52,7 +56,7 @@ int main(int argc, const char * argv[]) {
     Tree* exTree = NULL;
         
     while ((int)trees.size() < numTrees) {
-        Tree* t = new Tree(lambda, mu, 1.0);
+        Tree* t = new Tree(lambda, mu, 1.0);        
         if (t->getNumTaxa() == (int)expectedNumberOfTips)
             trees.push_back(t);
         else
@@ -66,13 +70,11 @@ int main(int argc, const char * argv[]) {
         else
             delete t;
     }
+                
+        //for (int i = 0; i < 5;  i++) {
     
-    
-        
-        for (int i = 0; i < 5;  i++) {
-    
-            std::vector<double> freqs = {arrayOfFreqs[i][0], arrayOfFreqs[i][1]};
-            std::cout << std::to_string(freqs[0]) << ", " << std::to_string(freqs[0]) << std::endl;
+            std::vector<double> freqs = {0.9, 0.1};
+            //std::cout << std::to_string(freqs[0]) << ", " << std::to_string(freqs[0]) << std::endl;
             
     //std::map<Tree*, CharMatrix*> simulatedMatrices;
                     
@@ -163,8 +165,8 @@ int main(int argc, const char * argv[]) {
                 }
                 fw.close();
                 gw.close();
-             }
-        }
+             //}
+        //}
     return 0;
 }
 
