@@ -35,15 +35,13 @@ int main(int argc, const char * argv[]) {
     
     //for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
     
-    double turnoverRate = 0.2; // mu over lambda
+    double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
     double lambda = mu + diversificationRate;
     double sharingRate = 0.4;
-    
-    std::cout << "lambda: " << lambda << ", mu: " << mu << std::endl;
-    
     double ratio = 0.0;
+    std::vector<double> freqs = {0.9, 0.1};
     
     //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
     // std::vector<double>
@@ -73,7 +71,7 @@ int main(int argc, const char * argv[]) {
                 
         //for (int i = 0; i < 5;  i++) {
     
-            std::vector<double> freqs = {0.9, 0.1};
+        
             //std::cout << std::to_string(freqs[0]) << ", " << std::to_string(freqs[0]) << std::endl;
             
     //std::map<Tree*, CharMatrix*> simulatedMatrices;

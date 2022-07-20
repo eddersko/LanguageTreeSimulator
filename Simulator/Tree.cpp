@@ -191,8 +191,6 @@ Tree::Tree(double lambda, double mu, double t) {
         double rate = activeNodes.size() * (lambda + mu);
         currentTime += -log(rv.uniformRv()) / rate;
         
-        std::cout << "rate: " << rate << ", currentTime: " << currentTime << std::endl;
-        
         if (currentTime < time) {
             
             int whichNode = (int)(rv.uniformRv()*activeNodes.size());
@@ -201,8 +199,6 @@ Tree::Tree(double lambda, double mu, double t) {
             
             
             if (rv.uniformRv() < lambda / (lambda+mu)) { // speciation
-                
-                std::cout << "speciation" << std::endl;
                 
                 Node* q = addNode(-1);
                 r = addNode(-1);
@@ -216,15 +212,11 @@ Tree::Tree(double lambda, double mu, double t) {
                 
             } else { // extinction
                 
-                std::cout << "extinction" << std::endl;
-                
                 // replace current node p with last node in array then pop last node from array
                 activeNodes[whichNode] = activeNodes[activeNodes.size()-1];
                 activeNodes.pop_back();
                 
-                
             }
-            
         }
     }
     
@@ -761,9 +753,7 @@ void Tree::rescale(void) {
             p->setRescale(false);
         
         if (p->getRescale() == true)
-            subtreeLength += p->getBrLen();
-        
-        std::cout << numMarkedDescendants << std::endl;
+            subtreeLength += p->getBrLen();        
     }
         
     if (newRoot != NULL) {
