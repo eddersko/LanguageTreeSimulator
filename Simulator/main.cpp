@@ -35,7 +35,7 @@ int main(int argc, const char * argv[]) {
     
     //for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
     
-    double turnoverRate = 0.8; // mu over lambda
+    double turnoverRate = 0.2; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
     double lambda = mu + diversificationRate;

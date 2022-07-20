@@ -22,7 +22,7 @@ class Node {
         void removeDescendant(Node* p) { descendants.erase(p); }
         void removeAllDescendants(void) { descendants.clear(); }
         int getNumDescendents(void) { return (int)descendants.size(); }
-        void setAncestor(Node* p) {ancestor = p; }
+        void setAncestor(Node* p) { ancestor = p; }        
         Node* getAncestor(void) { return ancestor; }
         void setIndex(int i) {index = i;}
         int getIndex(void) {return index;}

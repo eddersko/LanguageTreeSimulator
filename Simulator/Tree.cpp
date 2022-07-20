@@ -763,18 +763,21 @@ void Tree::rescale(void) {
         if (p->getRescale() == true)
             subtreeLength += p->getBrLen();
         
+        std::cout << numMarkedDescendants << std::endl;
     }
-            
-    root = newRoot;
-    root->setAncestor(NULL);
-    double min = root->getTime();
-    
-    initializeDownPassSequence();
-    reindex();
-    
-    for (Node* p : downPassSequence) {
-        p->setTime( (p->getTime()-min) /(1.0-min) );
-        p->setBrLen( p->getBrLen() * (3/subtreeLength));
+        
+    if (newRoot != NULL) {
+        root = newRoot;
+        root->setAncestor(NULL);
+        double min = root->getTime();
+        
+        initializeDownPassSequence();
+        reindex();
+        
+        for (Node* p : downPassSequence) {
+            p->setTime( (p->getTime()-min) /(1.0-min) );
+            p->setBrLen( p->getBrLen() * (3/subtreeLength));
+        }
     }
     
 }
