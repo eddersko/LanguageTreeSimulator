@@ -33,13 +33,13 @@ int main(int argc, const char * argv[]) {
     double expectedNumberOfTips = 20.0;
     
     
-    //for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
+    for (double turnoverRate = 0.0; turnoverRate <= 0.8; turnoverRate += 0.2) {
     
-    double turnoverRate = 0.8; // mu over lambda
+    //double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
     double lambda = mu + diversificationRate;
-    double sharingRate = 0.4;
+    double sharingRate = 0.0;
     double ratio = 0.0;
     std::vector<double> freqs = {0.9, 0.1};
     
@@ -124,6 +124,7 @@ int main(int argc, const char * argv[]) {
                         fw << "hsearch swap=none;\n";
                     else
                         fw << "hsearch swap;\n";
+                    fw << "pset collapse=no;\n";
                     fw << "savetrees file=/Users/edwinko/Downloads/temp.nex format=altnex append=yes;\n";
                     fw << "gettrees file=/Users/edwinko/Downloads/temp.nex allBlocks=yes;\n";
                     
@@ -163,7 +164,7 @@ int main(int argc, const char * argv[]) {
                 }
                 fw.close();
                 gw.close();
-             //}
+             }
         //}
     return 0;
 }

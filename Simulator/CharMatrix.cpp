@@ -425,6 +425,174 @@ CharMatrix::CharMatrix(Tree* destTree, Tree* sourceTree, double** q, int ns, std
     
 }
 
+
+/*
+ Simulate data on a given tree input with horizontal transfer and temporal biasing.
+ 
+  t: tree
+  q: rate matrix
+  ns: number of states
+  freqs: equilibrium frequencies
+  nc: number of charactes/cognates
+  rng: random number generator
+  alphaRat: alpha and beta parameter of gamma distribution for rate heterogeneity
+  alphaRes: alpha parameter of beta distribution for resilience/resistance to borrowing
+  betaRes: beta parameter of beta distribution for resilience/resistance to borrowing
+  sharingTimes: times of horizontal transfer events
+  delta: likelihood of borrowing locally or distantly
+  episolon: likelihood of borrowing at deeper or shallower time depths
+ */
+ 
+CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta, bool borrowNearTips) {
+        
+    RandomVariable& rng = RandomVariable::randomVariableInstance();
+    
+    // determine sharing events
+    std::vector<Node*> sourceNodes;
+    t->addSharingEvents(&rng, sharingRate, sourceNodes, delta, borrowNearTips);
+
+    // simulate data
+    numStates = ns;
+    numChar = nc;
+    resilience = new double[nc];
+    siteRate = new double[nc];
+    //Probability::Gamma::discretization(rateVar, alphaR, alphaR, 4, false);
+    
+    std::vector<double> stateFreqs;
+    for (int i = 0; i < numStates; i++)
+        stateFreqs.push_back(freqs[i]);
+    std::vector<Node*>& dpseq = t->getDownPassSequence();
+    
+    // add CognateSets
+    for (Node* n : dpseq)
+        n->setCognateSet(new CognateSet(numChar, &rng, stateFreqs));
+        
+        
+    for (int n = (int)dpseq.size()-1; n >= 0; n--) {
+        Node* p = dpseq[n];
+                
+        CognateSet* cs = p->getCognateSet();
+        
+        if (cs == NULL)
+            Msg::error("There should be a cognate set that is not NULL!");
+        
+        if (p == t->getRoot()) {
+            
+            // no need to do anything, cognate set already constructed from stationary probabilities
+            
+        } else {
+         
+            for (int c = 0; c < numChar; c++) {
+                                                
+                int currState = (*p->getAncestor()->getCognateSet())[c];
+                double len = p->getTime() - p->getAncestor()->getTime();
+                
+                resilience[c] = Probability::Beta::rv(&rng, alphaRes, betaRes);
+                
+                if (alphaRat < 50.0)
+                    siteRate[c] = Probability::Gamma::rv(&rng, alphaRat, alphaRat);
+                else
+                    siteRate[c] = 1.0;
+                                
+                double v = 0.0;
+                double cLen = len * siteRate[c];
+                
+                while (v < cLen) {
+                                        
+                    double rate = -q[currState][currState];
+                            
+                    v += -log(rng.uniformRv())/rate;
+                    
+                    if (v < cLen) {
+                        
+                        double u = rng.uniformRv();
+                        double sum = 0.0;
+                        
+                        for (int i = 0; i < numStates; i++) {
+                            
+                            sum += q[currState][i] / rate;
+                            //std::cout << u << " " << sum << std::endl;
+                            if (u < sum) {
+                                currState = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+                (*cs)[c] = currState;
+            }
+                                    
+        }
+    }
+
+    // collect all sourceNodes sorted by times
+    sort(sourceNodes.begin(), sourceNodes.end(), compareTimes);
+    
+    //for (int i = 0; i < (int)sourceNodes.size(); i++)
+        //std::cout << sourceNodes[i]->getTime() << std::endl;
+        
+    //t->print();
+    
+    // simulate in order sharing then resimulate history from destination node
+    for (int i = 0; i < (int)sourceNodes.size(); i++) {
+        
+        Node* dest = sourceNodes[i]->getDest();
+                
+        
+        if (dest == NULL) {
+            continue;
+            //Msg::error("dest should not be NULL.");
+        }
+        
+        for (int j = 0; j < numChar; j++) {
+            double randomNumber = rng.uniformRv();
+            if (randomNumber > resilience[j]) {
+                //std::cout << "Sharing between " << dest->getIndex() << " and " << sourceNodes[i]->getIndex() << " in site " << std::endl;
+                (*dest->getCognateSet())[j] = (*sourceNodes[i]->getCognateSet())[j];
+                simulateSubTree(dest, dest, q, &rng, j);
+            }
+        }
+        
+    }
+    
+    // count number of taxa on tree
+    
+    numTaxa = 0;
+    for (Node* n : t->getDownPassSequence()) {
+        if (n->getIsTip() == true)
+            numTaxa++;
+        
+    }
+            
+    
+    // dynamically allocate the matrix
+    matrix = new int*[numTaxa];
+    matrix[0] = new int[numTaxa*numChar];
+    for (int i = 1; i < numTaxa; i++)
+        matrix[i] = matrix[i-1]+numChar;
+    for (int i = 0; i < numTaxa; i++)
+        for (int j = 0; j < numChar; j++)
+            matrix[i][j] = 0;
+    
+    // put tip cognate sets into matrix
+    for (Node* n : t->getDownPassSequence()) {
+        if (n->getIsTip() == true) {
+            int tipIdx = n->getIndex();
+            if (tipIdx >= numTaxa)
+                Msg::error("Tip index is too large!");
+            CognateSet* cs = n->getCognateSet();
+            
+            for (int i = 0; i < numChar; i++)
+                matrix[tipIdx][i] = (*cs)[i];
+        }
+    }
+    
+    
+    delete resilience;
+    delete siteRate;
+}
+
+
 void CharMatrix::simulateSubTree(Node* n, Node* r, double** q, RandomVariable* rng, int site) {
     
     if (n != NULL) {

@@ -29,6 +29,7 @@ public:
     std::vector<Node*> nodesAtTime(double time);
     void addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& sourceNodes, double delta);
     void addSharingEvents(RandomVariable* rng, Tree* t, double rate, std::vector<Node*>& sourceNodes);
+    void addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& sourceNodes, double delta, bool borrowNearTip);
     Node* getRoot(void) { return root; }
     int getNumTaxa(void) {return numTaxa;}
     void setNumTaxa(int n) { numTaxa = n;}

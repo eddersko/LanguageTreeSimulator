@@ -7,6 +7,7 @@
 
 #include "Tree.hpp"
 #include "RandomVariable.hpp"
+#include "Probability.hpp"
 #include "Node.hpp"
 #include <cmath>
 #include <iostream>
@@ -771,6 +772,186 @@ double Tree::rescale(void) {
             p->setBrLen( p->getBrLen() * (3/subtreeLength));
         }
     }*/
+    
+}
+
+// temporally biased
+
+void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& sourceNodes, double delta, bool borrowNearTip) {
+        
+    // insert nodes into tree at source points
+            
+    for (Node* n : downPassSequence) {
+                        
+        Node* nAncs = n->getAncestor();
+        
+        if (nAncs != NULL) {
+            double v = nAncs->getTime();
+            double len = n->getBrLen()+v;
+            double x;
+            while (v < len) {
+                
+                nAncs = n->getAncestor();
+                
+                v += -log(rng->uniformRv())/rate;
+                
+                if (borrowNearTip)
+                    x = v / time; // borrowing more likely near tip
+                else
+                    x = 1 - (v / time); // borrowing more likely near root
+                // if 1/(v/time)
+                
+                double y = rng->uniformRv();
+                                                                
+                //double x = Probability::Beta::rv(rng, alphaTemp, betaTemp);
+            
+                // if 1/(v/time)
+                
+                if (v < len && x < y) {
+                    
+                    //std::cout << "v: " << v << ", time: " << time << ", x: " << x << std::endl;
+                                        
+                    Node* p = addNode();
+                    p->setTime(v);
+                    //std::cout << p->getTime() << std::endl;
+                    sourceNodes.push_back(p);
+                                        
+                    nAncs->addDescendant(p);
+                    p->addDescendant(n);
+                    nAncs->removeDescendant(n);
+                    n->setAncestor(p);
+                    p->setAncestor(nAncs);
+                                            
+                    Node* d = NULL;
+                    p->setDest(d);
+                                            
+                }
+            }
+        }
+    }
+    
+    initializeDownPassSequence();    
+
+    //std::cout << "source node size: " << sourceNodes.size() << std::endl;
+    // add destination nodes to tree
+    
+    for (Node* n : sourceNodes) {
+        reindex();
+        double nTime = n->getTime();
+        std::vector<Node*> activeNodes = nodesAtTime(nTime);
+        std::vector<Node*>::iterator it = find(activeNodes.begin(), activeNodes.end(), n);
+        if (it != activeNodes.end())
+            Msg::error("Found n " + std::to_string(n->getIndex()) +  " in list! (Not good!)");
+        //std::cout << "size of activeNodes: " << activeNodes.size() << std::endl;
+        //if (activeNodes.size() == 1)
+          //  std::cout << "n's index is " << n->getIndex() << " and time is: " << nTime << std::endl;
+                
+        if (activeNodes.size() > 0) {
+        
+            Node* d = NULL;
+                                    
+            // get the distances from n to all the nodes in activeNodes
+            
+            std::vector<double> destProbs;
+            
+            for (int i = 0; i < activeNodes.size(); i++) {
+                double dist = findDistance(n, activeNodes[i]); // call function
+                dist -= activeNodes[i]->getTime() - nTime;
+                if (activeNodes[i]->getTime() - nTime < 0.0)
+                    Msg::error("Trying to subtract a negative amount!");
+                //std::cout << "findDistance(" << n->getIndex() << ", " << activeNodes[i]->getIndex() << "): " << dist << std::endl;
+                destProbs.push_back(dist);
+            }
+            
+            
+            
+            // calculate the (unscaled) probability to each potential destination
+            
+            double sum = 0.0;
+            
+            for (int i = 0; i < destProbs.size(); i++) {
+                                
+                double x = 1.0 / pow(destProbs[i], delta);
+                sum += x;
+                destProbs[i] = x;
+                
+            }
+            
+            // scale those probabilities
+            
+            double scaleFactor = 1.0 / sum;
+            
+            for (int i = 0; i < destProbs.size(); i++)
+                destProbs[i] *= scaleFactor;
+                            
+            // then choose one potential destination in proportion to their probabilities
+            
+            sum = 0.0;
+            double u = rng->uniformRv();
+            for (int i = 0; i < destProbs.size(); i++) {
+                sum += destProbs[i];
+                if (u < sum) {
+                    d = activeNodes[i];
+                    break;
+                }
+            }
+            
+            if (d == NULL)
+                Msg::error("Why the hell is d NULL?!");
+            
+            //std::cout << "d's index: " << d->getIndex() << std::endl;
+            
+            // hold distances in a vector, make a vector of doubles
+            
+
+            //do {
+              //   d = activeNodes[(int)(rng->uniformRv()*activeNodes.size())];
+            //} while (d == n);
+            
+            Node* dAncs = d->getAncestor();
+            
+            if (dAncs == NULL)
+                Msg::error("Why the hell is dAncs NULL?!");
+            
+            Node* dest = addNode();
+            dest->setTime(nTime);
+            
+            d->setAncestor(dest);
+            dest->setAncestor(dAncs);
+            dAncs->removeDescendant(d);
+            dAncs->addDescendant(dest);
+            dest->addDescendant(d);
+            
+            dest->setSource(n);
+            n->setDest(dest);
+            //std::cout << "destination is: " << dest << std::endl;
+            
+            initializeDownPassSequence();
+
+            //std::cout << "source: " << n->getIndex() << " " << n->getTime() << ", dest: " << d->getIndex() << std::endl;
+            
+        }
+        
+    }
+                    
+
+    
+    // initialize branch lengths from time
+    
+    for (Node* n : downPassSequence) {
+        
+        Node* nAncs = n->getAncestor();
+        if (nAncs != NULL)
+            n->setBrLen(n->getTime()-nAncs->getTime());
+        else
+            n->setBrLen(0.0);
+            
+    }
+    
+    reindex();
+    //print();
+    
+    
     
 }
 

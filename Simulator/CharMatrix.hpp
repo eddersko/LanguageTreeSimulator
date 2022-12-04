@@ -20,6 +20,7 @@ public:
     CharMatrix(double** q, int ns, double* freqs, int nc, RandomVariable* rng, double alpha, double beta, double sharingTimes);
     CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta);
     CharMatrix(Tree* t1, Tree* t2, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double ratio, double delta);
+    CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta, bool borrowNearTips);
     void print(void);
     std::string getString(void);
 private:
