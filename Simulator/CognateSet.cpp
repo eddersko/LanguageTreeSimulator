@@ -42,6 +42,8 @@ CognateSet::CognateSet(const CognateSet& c) {
 }
 
 
+
+
 // rate at which the cognate changes
 double CognateSet::calculateRate(double** q, int numStates) {
     
@@ -55,7 +57,12 @@ double CognateSet::calculateRate(double** q, int numStates) {
     return lambda;
     
 }
-
+void CognateSet::incrementNumSites(int val) {
+    
+    numCognates = numCognates + 1;
+    cognates.resize(numCognates, val);
+    
+}
 
 void CognateSet::changeCognate(double** q, int numStates, RandomVariable* rng) {
     

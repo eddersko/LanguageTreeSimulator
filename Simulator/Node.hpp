@@ -50,8 +50,11 @@ class Node {
         bool getRescale(void) {return isRescale;}
         void setIsDistance(bool t) { isDistance = t;}
         bool getIsDistance(void) {return isDistance;}
+        void setIsExternal(bool t) { isExternal = t;}
+        bool getIsExternal(void) {return isExternal;}
         int getOffset(void) {return offset;}
         void setOffset(int o) { offset = o;}
+        void addSite()
     private:
         std::set<Node*> descendants;
         Node* ancestor;
@@ -67,6 +70,7 @@ class Node {
         bool isNewick;
         bool isRescale;
         bool isDistance;
+        bool isExternal;
         int offset;
 };
 

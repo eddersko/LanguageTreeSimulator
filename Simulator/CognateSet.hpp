@@ -17,6 +17,7 @@ public:
     CognateSet(void) = delete;
     CognateSet(int nc, RandomVariable* rng, std::vector<double> eq);
     CognateSet(const CognateSet& c);
+    void incrementNumSites(int val);
     int& operator[](size_t i) { return cognates[i] ; }
     const int& operator[](size_t i) const { return cognates[i] ; }
     double calculateRate(double** q, int numStates);

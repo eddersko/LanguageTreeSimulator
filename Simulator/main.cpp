@@ -32,6 +32,7 @@ int main(int argc, const char * argv[]) {
     
     double expectedNumberOfTips = 20.0;
     
+    for (double sharingRate = 0.0; sharingRate <= 5.0; sharingRate += 1.0) {
     
     for (double turnoverRate = 0.0; turnoverRate <= 0.8; turnoverRate += 0.2) {
     
@@ -39,10 +40,12 @@ int main(int argc, const char * argv[]) {
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
     double lambda = mu + diversificationRate;
-    double sharingRate = 0.0;
+    
     double ratio = 0.0;
     std::vector<double> freqs = {0.9, 0.1};
     
+        std::cout << "tr: " << turnoverRate << std::endl;
+        
     //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
     // std::vector<double>
     //double arrayOfFreqs [5][2] = {{0.5, 0.5}, {0.6, 0.4}, {0.7, 0.3}, {0.8, 0.2}, {0.9, 0.1}};
@@ -61,13 +64,13 @@ int main(int argc, const char * argv[]) {
             delete t;
     }
             
-    while (exTree == NULL) {
-        Tree* t = new Tree(lambda, mu, 1.0);
-        if (t->getNumTaxa() == (int)expectedNumberOfTips)
-            exTree = t;
-        else
-            delete t;
-    }
+    //while (exTree == NULL) {
+    //    Tree* t = new Tree(lambda, mu, 1.0);
+        //    if (t->getNumTaxa() == (int)expectedNumberOfTips)
+        //         exTree = t;
+        // else
+        //  delete t;
+        //}
                 
         //for (int i = 0; i < 5;  i++) {
     
@@ -75,11 +78,11 @@ int main(int argc, const char * argv[]) {
             //std::cout << std::to_string(freqs[0]) << ", " << std::to_string(freqs[0]) << std::endl;
             
     //std::map<Tree*, CharMatrix*> simulatedMatrices;
-                    
-            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr" + std::to_string(sharingRate) + "-srRatio" + std::to_string(ratio)  + "-delta.nex", std::ios::out);
-            std::ofstream gw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr" + std::to_string(sharingRate) + "-srRatio" + std::to_string(ratio) + "-delta.nex", std::ios::out);
+                    //
+            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
+            std::ofstream gw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
                               
-                for (double delta = -10.0; delta <= 10.1; delta += 2) {
+                for (double delta = -10.0; delta <= 10.1; delta += 5) {
                     
                 int count = 1;
                 
@@ -106,7 +109,7 @@ int main(int argc, const char * argv[]) {
                       
                     
                     //CharMatrix* cm = new CharMatrix(&t1, q, 2, freqs, numCognates, alphaR, alphaS, betaS, sharingRate, delta);
-                    CharMatrix* cm = new CharMatrix(&t1, &t2, q, 2, freqs, numCognates, alphaR, alphaS, betaS, sharingRate, ratio, delta);
+                    CharMatrix* cm = new CharMatrix(&t1, q, 2, freqs, numCognates, alphaR, alphaS, betaS, sharingRate, ratio, delta);
                     //simulatedMatrices.insert(std::make_pair(tree, cm));
                   
                     fw << cm->getString();
@@ -124,15 +127,15 @@ int main(int argc, const char * argv[]) {
                         fw << "hsearch swap=none;\n";
                     else
                         fw << "hsearch swap;\n";
-                    fw << "pset collapse=no;\n";
+                    //fw << "pset collapse=no;\n";
                     fw << "savetrees file=/Users/edwinko/Downloads/temp.nex format=altnex append=yes;\n";
                     fw << "gettrees file=/Users/edwinko/Downloads/temp.nex allBlocks=yes;\n";
-                    
+
                     if (count == 1)
-                        fw << std::fixed << std::setprecision(2) << "treedist reftree=1 file=/Users/edwinko/Downloads/" + modelName +  "_treedist_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio << "_delta" << delta << ".txt replace=yes;\n";
+                        fw << std::fixed << std::setprecision(2) << "treedist reftree=1 file=/Users/edwinko/Downloads/" + modelName +  "_treedist_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate << "_delta" << delta << ".txt replace=yes;\n";
                         
                     else
-                        fw << std::fixed << std::setprecision(2) << "treedist reftree=1 file=/Users/edwinko/Downloads/" + modelName +  "_treedist_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio << "_delta" << delta << ".txt append=yes;\n";
+                        fw << std::fixed << std::setprecision(2) << "treedist reftree=1 file=/Users/edwinko/Downloads/" + modelName +  "_treedist_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate  << "_delta" << delta << ".txt append=yes;\n";
                     
                     fw << "end;\n";
                                 
@@ -150,9 +153,9 @@ int main(int argc, const char * argv[]) {
                                             
                     if (count == 1)
                         
-                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio <<  "_delta" << delta << ".txt replace=yes format=altnex brLens=yes ;\n";
+                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate <<  "_delta" << delta << ".txt replace=yes format=altnex brLens=yes ;\n";
                     else
-                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_sr" << sharingRate << "_srRatio" << ratio << "_delta" << delta << ".txt append=yes format=altnex brLens=yes ;\n";
+                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate << "_delta" << delta << ".txt append=yes format=altnex brLens=yes ;\n";
                     gw << "end;\n";
                     
                     count++;
@@ -165,7 +168,7 @@ int main(int argc, const char * argv[]) {
                 fw.close();
                 gw.close();
              }
-        //}
+        }
     return 0;
 }
 

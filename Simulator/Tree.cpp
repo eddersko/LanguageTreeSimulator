@@ -545,6 +545,117 @@ void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>
     
 }
 
+
+/*
+    This function adds external sharing events to the tree.
+ */
+
+void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& sourceNodes) {
+    
+    // insert nodes into tree at source points
+            
+    for (Node* n : downPassSequence) {
+                        
+        Node* nAncs = n->getAncestor();
+        
+        if (nAncs != NULL) {
+            double v = nAncs->getTime();
+            double len = n->getBrLen()+v;
+            
+            while (v < len) {
+                
+                nAncs = n->getAncestor();
+                
+                v += -log(rng->uniformRv())/rate;
+                
+                if (v < len) {
+                    Node* p = addNode();
+                    p->setTime(v);
+                    //std::cout << p->getTime() << std::endl;
+                    sourceNodes.push_back(p);
+                                        
+                    nAncs->addDescendant(p);
+                    p->addDescendant(n);
+                    nAncs->removeDescendant(n);
+                    n->setAncestor(p);
+                    p->setAncestor(nAncs);
+                                            
+                    Node* d = NULL;
+                    p->setDest(d);
+                }
+            }
+        }
+    }
+    
+    initializeDownPassSequence();
+    
+    // add destination nodes to tree
+    
+    for (Node* n : sourceNodes) {
+        reindex();
+        double nTime = n->getTime();
+        std::vector<Node*> activeNodes = nodesAtTime(nTime);
+        std::vector<Node*>::iterator it = find(activeNodes.begin(), activeNodes.end(), n);
+        if (it != activeNodes.end())
+            Msg::error("Found n " + std::to_string(n->getIndex()) +  " in list! (Not good!)");
+        //std::cout << "size of activeNodes: " << activeNodes.size() << std::endl;
+        //if (activeNodes.size() == 1)
+          //  std::cout << "n's index is " << n->getIndex() << " and time is: " << nTime << std::endl;
+                
+        if (activeNodes.size() > 0) {
+        
+            //Node* dAncs = d->getAncestor();
+            
+            //if (dAncs == NULL)
+            //    Msg::error("Why the hell is dAncs NULL?!");
+            
+            Node* dest = addNode();
+            dest->setIsExternal(true);
+            dest->setTime(nTime);
+            dest->setSource(n);
+            n->setDest(dest);
+            
+            //d->setAncestor(dest);
+            //dest->setAncestor(dAncs);
+            //dAncs->removeDescendant(d);
+            //dAncs->addDescendant(dest);
+            //dest->addDescendant(d);
+            
+            
+            
+            //std::cout << "destination is: " << dest << std::endl;
+            
+            initializeDownPassSequence();
+            //std::cout << "source: " << n->getIndex() << " " << n->getTime() << ", dest: " << d->getIndex() << std::endl;
+            
+        }
+        
+    }
+                    
+
+    
+    // initialize branch lengths from time
+    
+    for (Node* n : downPassSequence) {
+        
+        Node* nAncs = n->getAncestor();
+        if (nAncs != NULL)
+            n->setBrLen(n->getTime()-nAncs->getTime());
+        else
+            n->setBrLen(0.0);
+            
+    }
+    
+    reindex();
+    //print();
+    
+    
+    
+    
+}
+
+
+
 void Tree::reindex() {
 
     // check indices of tips
