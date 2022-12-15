@@ -27,14 +27,15 @@ int main(int argc, const char * argv[]) {
     double betaS = 1.0;
     int numCognates = 1000;
     int numTrees = 1;
+    double sharingRate = 0.8;
     
     // numcognates" + std::to_string(numCognates) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr-delta.nex", std::ofstream::out);
     
     double expectedNumberOfTips = 20.0;
     
-    for (double sharingRate = 0.0; sharingRate <= 5.0; sharingRate += 1.0) {
+    //for (double sharingRate = 1.0; sharingRate <= 5.0; sharingRate += 1.0) {
     
-    for (double turnoverRate = 0.0; turnoverRate <= 0.8; turnoverRate += 0.2) {
+    for (double turnoverRate = 0.0; turnoverRate <= 0.0; turnoverRate += 0.2) {
     
     //double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
@@ -52,7 +53,7 @@ int main(int argc, const char * argv[]) {
     double** q = makeRateMatrix();
     
     std::vector<Tree*> trees;
-    Tree* exTree = NULL;
+    //Tree* exTree = NULL;
         
     while ((int)trees.size() < numTrees) {
         Tree* t = new Tree(lambda, mu, 1.0);        
@@ -77,7 +78,7 @@ int main(int argc, const char * argv[]) {
             
     //std::map<Tree*, CharMatrix*> simulatedMatrices;
                     //
-            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
+            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/ext/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
             std::ofstream gw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
                               
                 for (double delta = -10.0; delta <= 10.1; delta += 5) {
@@ -165,7 +166,7 @@ int main(int argc, const char * argv[]) {
                 fw.close();
                 gw.close();
              }
-        }
+        //}
     return 0;
 }
 

@@ -552,9 +552,9 @@ void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>
 
 void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& destNodes) {
     
-    std::cout <<  "external sharing event" << std::endl;
+    //std::cout <<  "external sharing event" << std::endl;
     
-    // insert nodes into tree at source points
+    // insert nodes into tree at dest points
             
     for (Node* n : downPassSequence) {
                         
@@ -583,7 +583,7 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
                     p->setAncestor(nAncs);
                                             
                     Node* d = NULL;
-                    p->setDest(d);
+                    p->setSource(d);
                 }
             }
         }
@@ -591,7 +591,7 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
     
     initializeDownPassSequence();
     
-    // add destination nodes to tree
+    // set source nodes to dest nodes
     
     for (Node* n : destNodes) {
         reindex();

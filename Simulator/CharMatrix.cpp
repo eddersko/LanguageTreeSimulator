@@ -391,7 +391,6 @@ CharMatrix::CharMatrix(Tree* destTree, Tree* sourceTree, double** q, int ns, std
             double randomNumber = rng.uniformRv();
             if (randomNumber > resilience[j]) {
                 //std::cout << "Sharing between " << dest->getIndex() << " (" << (*dest->getCognateSet())[j] << ") and " << sourceNodes[i]->getIndex() << " (" << (*sourceNodes[i]->getCognateSet())[j] << ") in site " << std::endl;
-                                                                                                
                 (*dest->getCognateSet())[j] = (*sourceNodes[i]->getCognateSet())[j];
                 simulateSubTree(dest, dest, q, &rng, j);
             }
@@ -452,8 +451,10 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
 
     // determine sharing events
     std::vector<Node*> sourceNodes;
+    std::vector<Node*> destNodes;
+    
     t->addSharingEvents(&rng, internalSharingRate/subtreeLength, sourceNodes, delta);
-    t->addExternalSharingEvents(&rng, externalSharingRate/subtreeLength, sourceNodes);
+    t->addExternalSharingEvents(&rng, externalSharingRate/subtreeLength, destNodes);
     
     // simulate data
     numStates = ns;
@@ -470,7 +471,6 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     // add CognateSets
     for (Node* n : dpseq)
         n->setCognateSet(new CognateSet(numChar, &rng, stateFreqs));
-        
     
     // simulating evolution along the tree
     for (int n = (int)dpseq.size()-1; n >= 0; n--) {
@@ -529,12 +529,12 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                                     
         }
     }
-
     
     // this is where the fun begins!
     
     // collect all sourceNodes sorted by times
     sort(sourceNodes.begin(), sourceNodes.end(), compareTimes);
+    sort(destNodes.begin(), destNodes.end(), compareTimes);
 
     //for (int i = 0; i < (int)sourceNodes.size(); i++)
         //std::cout << sourceNodes[i]->getTime() << std::endl;
@@ -555,15 +555,43 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
             double randomNumber = rng.uniformRv();
             if (randomNumber > resilience[j]) {
                 //std::cout << "Sharing between " << dest->getIndex() << " and " << sourceNodes[i]->getIndex() << " in site " << std::endl;
-                if (dest->getIsExternal() == true) {
-                                        
+                               
+                (*dest->getCognateSet())[j] = (*sourceNodes[i]->getCognateSet())[j];
+                simulateSubTree(dest, dest, q, &rng, j);
+                
+            }
+        }
+        
+    }
+    
+    
+    for (int i = 0; i < (int)destNodes.size(); i++) {
+                        
+        Node* dest = destNodes[i];
+        
+        if (dest == NULL)
+            continue;
+            //Msg::error("dest should not be NULL.");
+        
+                        
+        for (int j = 0; j < numChar; j++) {
+            double randomNumber = rng.uniformRv();
+            if (randomNumber > resilience[j]) {
+                //std::cout << "Sharing between " << dest->getIndex() << " and " << sourceNodes[i]->getIndex() << " in site " << std::endl;
+                
+                if (dest->getSource()->getIsExternal() == true) {
+                    
                     // get the node's cognate set, add new site and set value to 1
                     
                     if (dest->getCognateSet() == NULL)
                         Msg::error("Cognate set should not be NULL.");
-                                        
+                    
+                    if (dest->getCognateSet()->getNumCognates() == 0)
+                        Msg::error("Number of cognates should not be 0.");
+                                                            
                     dest->getCognateSet()->incrementNumSites(1);
                     addSitesToDescendants(dest, 1);
+                    
                     //CognateSet* cs = dest->getCognateSet();
                     //dest->setCognateSet(cs);
                     //delete cs;
@@ -577,7 +605,7 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                     // get descendants of activeNodes and increment number of sites by one
                     
                     for (int k = 0; k < activeNodes.size(); k++) {
-                        activeNodes[k]->getCognateSet()->incrementNumSites(-1);
+                        //activeNodes[k]->getCognateSet()->incrementNumSites(-1);
                         addSitesToDescendants(activeNodes[k], -1);
                         
                         //CognateSet* cs = activeNodes[k]->getCognateSet();
@@ -588,15 +616,11 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                                         
                     simulateSubTree(dest, dest, q, &rng, siteNum);
                                         
-                } else {
-                    (*dest->getCognateSet())[j] = (*sourceNodes[i]->getCognateSet())[j];
-                    simulateSubTree(dest, dest, q, &rng, j);
                 }
             }
         }
         
     }
-
     // count number of taxa on tree
 
     numTaxa = 0;
