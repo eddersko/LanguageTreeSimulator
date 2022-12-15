@@ -596,41 +596,40 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
     for (Node* n : destNodes) {
         reindex();
         double nTime = n->getTime();
-        std::vector<Node*> activeNodes = nodesAtTime(nTime);
-        std::vector<Node*>::iterator it = find(activeNodes.begin(), activeNodes.end(), n);
-        if (it != activeNodes.end())
-            Msg::error("Found n " + std::to_string(n->getIndex()) +  " in list! (Not good!)");
+        //std::vector<Node*> activeNodes = nodesAtTime(nTime);
+        //std::vector<Node*>::iterator it = find(activeNodes.begin(), activeNodes.end(), n);
+        //if (it != activeNodes.end())
+          //  Msg::error("Found n " + std::to_string(n->getIndex()) +  " in list! (Not good!)");
         //std::cout << "size of activeNodes: " << activeNodes.size() << std::endl;
         //if (activeNodes.size() == 1)
           //  std::cout << "n's index is " << n->getIndex() << " and time is: " << nTime << std::endl;
                 
-        if (activeNodes.size() > 0) {
+        //if (activeNodes.size() > 0) {
         
             //Node* dAncs = d->getAncestor();
             
             //if (dAncs == NULL)
             //    Msg::error("Why the hell is dAncs NULL?!");
             
-            Node* source = addNode();
-            source->setIsExternal(true);
-            source->setTime(nTime);
-            source->setDest(n);
-            n->setSource(source);
+        Node* source = addNode();
+        source->setIsExternal(true);
+        source->setTime(nTime);
+        source->setDest(n);
+        source->setIndex(-1);
+        n->setSource(source);
+        
+        initializeDownPassSequence();
             
-            //d->setAncestor(dest);
+        //d->setAncestor(dest);
             //dest->setAncestor(dAncs);
             //dAncs->removeDescendant(d);
             //dAncs->addDescendant(dest);
             //dest->addDescendant(d);
-            
-            
-            
+             
             //std::cout << "destination is: " << dest << std::endl;
-            
-            initializeDownPassSequence();
             //std::cout << "source: " << n->getIndex() << " " << n->getTime() << ", dest: " << d->getIndex() << std::endl;
             
-        }
+        //}
         
     }
                     
@@ -650,9 +649,6 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
     
     reindex();
     //print();
-    
-    
-    
     
 }
 

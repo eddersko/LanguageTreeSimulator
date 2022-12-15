@@ -21,7 +21,7 @@ public:
     CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta);
     CharMatrix(Tree* t1, Tree* t2, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double ratio, double delta);
     CharMatrix(Tree* t1, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double ratio, double delta);
-    CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta, bool borrowNearTips);    
+    CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta, bool borrowNearTips);
     void print(void);
     std::string getString(void);
 private:
@@ -33,7 +33,7 @@ private:
     std::vector<double> rateVar;
     double* siteRate;
     void simulateSubTree(Node* n, Node* r, double** q, RandomVariable* rng, int site);
-    void addSitesToDescendants(Node* n, int val);
+    void addSitesToDescendants(Node* n, Node* r, int val);
 };
 
 #endif /* CharMatrix_hpp */

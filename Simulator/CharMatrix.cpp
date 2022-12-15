@@ -461,6 +461,7 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     numChar = nc;
     resilience = new double[nc];
     siteRate = new double[nc];
+    
     //Probability::Gamma::discretization(rateVar, alphaR, alphaR, 4, false);
 
     std::vector<double> stateFreqs;
@@ -530,7 +531,7 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
         }
     }
     
-    // this is where the fun begins!
+    // this is where the fun continues!!
     
     // collect all sourceNodes sorted by times
     sort(sourceNodes.begin(), sourceNodes.end(), compareTimes);
@@ -573,7 +574,6 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
             continue;
             //Msg::error("dest should not be NULL.");
         
-                        
         for (int j = 0; j < numChar; j++) {
             double randomNumber = rng.uniformRv();
             if (randomNumber > resilience[j]) {
@@ -589,55 +589,51 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                     if (dest->getCognateSet()->getNumCognates() == 0)
                         Msg::error("Number of cognates should not be 0.");
                                                             
+                    // this seems to work fine...
                     dest->getCognateSet()->incrementNumSites(1);
-                    addSitesToDescendants(dest, 1);
                     
-                    //CognateSet* cs = dest->getCognateSet();
-                    //dest->setCognateSet(cs);
-                    //delete cs;
-                    
+                    // this probably works?
+                    addSitesToDescendants(dest, dest, 1);
+                                        
                     int siteNum = dest->getCognateSet()->getNumCognates() - 1;
                     
-                    // get cognate sets of other nodes at existing at that time, add new site, and set value to ?
-                    
+                    // get cognate sets of other nodes at existing at that time
                     std::vector<Node*> activeNodes = t->nodesAtTime(dest->getTime());
-                    
-                    // get descendants of activeNodes and increment number of sites by one
-                    
+                                                            
+                    // get descendants of activeNodes and increment number of sites by one, set value to -1 (i.e. ?)
                     for (int k = 0; k < activeNodes.size(); k++) {
-                        //activeNodes[k]->getCognateSet()->incrementNumSites(-1);
-                        addSitesToDescendants(activeNodes[k], -1);
-                        
-                        //CognateSet* cs = activeNodes[k]->getCognateSet();
-                        //activeNodes[k]->setCognateSet(cs);
-                        //delete cs;
-                        
+                        activeNodes[k]->getCognateSet()->incrementNumSites(1);
+                        addSitesToDescendants(activeNodes[k], activeNodes[k], -1);
                     }
-                                        
+                    
                     simulateSubTree(dest, dest, q, &rng, siteNum);
+                    nc++;
                                         
                 }
             }
         }
         
     }
+    
+    //std::cout << "nc: " << nc << ", size of destNodes: " << destNodes.size() << std::endl;
+    
+    // update numChar
+    numChar = nc;
+    
     // count number of taxa on tree
-
     numTaxa = 0;
     for (Node* n : t->getDownPassSequence()) {
         if (n->getIsTip() == true)
             numTaxa++;
-        
     }
-            
-
+    
     // dynamically allocate the matrix
     matrix = new int*[numTaxa];
     matrix[0] = new int[numTaxa*numChar];
     for (int i = 1; i < numTaxa; i++)
         matrix[i] = matrix[i-1]+numChar;
     for (int i = 0; i < numTaxa; i++)
-        for (int j = 0; j < numChar; j++)
+        for (int j = 0; j < (numChar); j++)
             matrix[i][j] = 0;
 
     // put tip cognate sets into matrix
@@ -648,8 +644,18 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                 Msg::error("Tip index is too large!");
             CognateSet* cs = n->getCognateSet();
             
-            for (int i = 0; i < numChar; i++)
+            if (cs->getNumCognates() != numChar) {
+                std::cout << "cs->getNumCognates: " << cs->getNumCognates() << ", numChar: " << numChar << std::endl;
+                Msg::error("Number of cognates should be the same!");
+            }
+            
+            for (int i = 0; i < numChar; i++) {
+                if ((*cs)[i] < -1 or (*cs)[i] > 1) {
+                    std::cout << "(*cs)[i]: " << (*cs)[i] << std::endl;
+                    std::cout << "cs numCognates: " << cs->getNumCognates() << std::endl;
+                }
                 matrix[tipIdx][i] = (*cs)[i];
+            }
         }
     }
 
@@ -830,12 +836,14 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     delete siteRate;
 }
 
-void CharMatrix::addSitesToDescendants(Node* n, int val) {
+void CharMatrix::addSitesToDescendants(Node* n, Node* r, int val) {
+    
+    if (n != r)
+        n->getCognateSet()->incrementNumSites(val);
     
     std::set<Node*>& nDes = n->getDescendants();
-    for (Node* p : nDes) {
-        p->getCognateSet()->incrementNumSites(val);
-    }
+    for (Node* p : nDes)
+        addSitesToDescendants(p, r, val);
 }
 
 
@@ -845,7 +853,7 @@ void CharMatrix::simulateSubTree(Node* n, Node* r, double** q, RandomVariable* r
         
         // simulate here
         if (n != r) {
-            Node* nAncs = n->getAncestor();
+            Node* nAncs = n->getAncestor(); // get ancestor
             if (nAncs == NULL)
                 Msg::error("We have a problem -- nAncs should not be NULL!");
             double brLen = n->getTime()-nAncs->getTime();
@@ -867,6 +875,10 @@ void CharMatrix::simulateSubTree(Node* n, Node* r, double** q, RandomVariable* r
                             }
                         }
                     }
+                }
+                if (n->getCognateSet()->getNumCognates() <= site) {
+                    std::cout << "numCognates: " << n->getCognateSet()->getNumCognates() << ", siteNum: " << site << ", index: " << n->getIndex() << std::endl;
+                    Msg::error("Out of bounds exception.");
                 }
                 (*n->getCognateSet())[site] = currState;
                 //if (n->getDescendants().size() == 0)
@@ -1093,8 +1105,13 @@ std::string CharMatrix::getString(void) {
     
     for (int i = 0; i < numTaxa; i++) {
         str += std::to_string(i) + " ";
-        for (int j = 0; j < numChar; j++)
-            str += std::to_string(matrix[i][j]);
+        for (int j = 0; j < numChar; j++) {
+            
+            if (matrix[i][j] == -1)
+                str += "?";
+            else
+                str += std::to_string(matrix[i][j]);
+        }
         str += "\n";
     }
     
