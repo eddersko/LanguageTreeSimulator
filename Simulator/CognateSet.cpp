@@ -59,7 +59,7 @@ double CognateSet::calculateRate(double** q, int numStates) {
 }
 void CognateSet::incrementNumSites(int val) {
     
-    numCognates = numCognates + 1;
+    numCognates = getNumCognates() + 1;
     cognates.resize(numCognates, val);
     
 }

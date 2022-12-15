@@ -54,7 +54,6 @@ class Node {
         bool getIsExternal(void) {return isExternal;}
         int getOffset(void) {return offset;}
         void setOffset(int o) { offset = o;}
-        void addSite()
     private:
         std::set<Node*> descendants;
         Node* ancestor;

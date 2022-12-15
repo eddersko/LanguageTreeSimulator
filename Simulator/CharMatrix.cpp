@@ -559,23 +559,34 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                                         
                     // get the node's cognate set, add new site and set value to 1
                     
+                    if (dest->getCognateSet() == NULL)
+                        Msg::error("Cognate set should not be NULL.");
+                                        
                     dest->getCognateSet()->incrementNumSites(1);
-                    CognateSet* cs = dest->getCognateSet();
-                    dest->setCognateSet(cs);
-                    delete cs;
+                    addSitesToDescendants(dest, 1);
+                    //CognateSet* cs = dest->getCognateSet();
+                    //dest->setCognateSet(cs);
+                    //delete cs;
+                    
+                    int siteNum = dest->getCognateSet()->getNumCognates() - 1;
                     
                     // get cognate sets of other nodes at existing at that time, add new site, and set value to ?
                     
                     std::vector<Node*> activeNodes = t->nodesAtTime(dest->getTime());
                     
+                    // get descendants of activeNodes and increment number of sites by one
+                    
                     for (int k = 0; k < activeNodes.size(); k++) {
                         activeNodes[k]->getCognateSet()->incrementNumSites(-1);
-                        CognateSet* cs = activeNodes[k]->getCognateSet();
-                        activeNodes[k]->setCognateSet(cs);
-                        delete cs;
+                        addSitesToDescendants(activeNodes[k], -1);
+                        
+                        //CognateSet* cs = activeNodes[k]->getCognateSet();
+                        //activeNodes[k]->setCognateSet(cs);
+                        //delete cs;
+                        
                     }
-                    
-                    // need to simulate evolutuion... TO DO
+                                        
+                    simulateSubTree(dest, dest, q, &rng, siteNum);
                                         
                 } else {
                     (*dest->getCognateSet())[j] = (*sourceNodes[i]->getCognateSet())[j];
@@ -793,6 +804,14 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     
     delete resilience;
     delete siteRate;
+}
+
+void CharMatrix::addSitesToDescendants(Node* n, int val) {
+    
+    std::set<Node*>& nDes = n->getDescendants();
+    for (Node* p : nDes) {
+        p->getCognateSet()->incrementNumSites(val);
+    }
 }
 
 

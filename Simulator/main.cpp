@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]) {
     double alphaS = 1.0;
     double betaS = 1.0;
     int numCognates = 1000;
-    int numTrees = 1000;
+    int numTrees = 1;
     
     // numcognates" + std::to_string(numCognates) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr-delta.nex", std::ofstream::out);
     
@@ -39,13 +39,11 @@ int main(int argc, const char * argv[]) {
     //double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
     double mu = diversificationRate * turnoverRate / (1.0 - turnoverRate);
-    double lambda = mu + diversificationRate;
-    
-    double ratio = 0.0;
-    std::vector<double> freqs = {0.9, 0.1};
-    
-        std::cout << "tr: " << turnoverRate << std::endl;
+    double lambda = mu + diversificationRate;    
+    double ratio = 1.0;
         
+    std::vector<double> freqs = {0.9, 0.1};
+                    
     //std::vector<double> freqs = makeDolloBaseFreq(lambda, mu);
     // std::vector<double>
     //double arrayOfFreqs [5][2] = {{0.5, 0.5}, {0.6, 0.4}, {0.7, 0.3}, {0.8, 0.2}, {0.9, 0.1}};
@@ -89,7 +87,6 @@ int main(int argc, const char * argv[]) {
                 for (Tree* tree : trees) {
                     
                     Tree t1(*tree);
-                    Tree t2(*exTree);
                     
                     fw << std::fixed << std::setprecision(2) << std::endl;
                     fw << "#NEXUS\n\n";

@@ -33,6 +33,7 @@ private:
     std::vector<double> rateVar;
     double* siteRate;
     void simulateSubTree(Node* n, Node* r, double** q, RandomVariable* rng, int site);
+    void addSitesToDescendants(Node* n, int val);
 };
 
 #endif /* CharMatrix_hpp */

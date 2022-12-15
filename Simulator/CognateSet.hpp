@@ -30,6 +30,7 @@ public:
     void changeCognate(double** q, int numStates, RandomVariable* rng);
     std::vector<int>& getCognates(void) {return cognates;}
     void print(void);
+    int getNumCognates(void) { return numCognates; }
 private:
     std::vector<int> cognates;
     int numCognates;

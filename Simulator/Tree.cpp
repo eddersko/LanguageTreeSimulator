@@ -550,7 +550,9 @@ void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>
     This function adds external sharing events to the tree.
  */
 
-void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& sourceNodes) {
+void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& destNodes) {
+    
+    std::cout <<  "external sharing event" << std::endl;
     
     // insert nodes into tree at source points
             
@@ -572,7 +574,7 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
                     Node* p = addNode();
                     p->setTime(v);
                     //std::cout << p->getTime() << std::endl;
-                    sourceNodes.push_back(p);
+                    destNodes.push_back(p);
                                         
                     nAncs->addDescendant(p);
                     p->addDescendant(n);
@@ -591,7 +593,7 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
     
     // add destination nodes to tree
     
-    for (Node* n : sourceNodes) {
+    for (Node* n : destNodes) {
         reindex();
         double nTime = n->getTime();
         std::vector<Node*> activeNodes = nodesAtTime(nTime);
@@ -609,11 +611,11 @@ void Tree::addExternalSharingEvents(RandomVariable* rng, double rate, std::vecto
             //if (dAncs == NULL)
             //    Msg::error("Why the hell is dAncs NULL?!");
             
-            Node* dest = addNode();
-            dest->setIsExternal(true);
-            dest->setTime(nTime);
-            dest->setSource(n);
-            n->setDest(dest);
+            Node* source = addNode();
+            source->setIsExternal(true);
+            source->setTime(nTime);
+            source->setDest(n);
+            n->setSource(source);
             
             //d->setAncestor(dest);
             //dest->setAncestor(dAncs);
