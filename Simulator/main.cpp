@@ -28,18 +28,18 @@ int main(int argc, const char * argv[]) {
     int numCognates = 1000;
     int numTrees = 1000;
     //double sharingRate = 0.8;
-    //double ratio = 1.0;
-    //double turnoverRate = 0.2;
+    double ratio = 1.0;
+    double turnoverRate = 0.2;
     
     // numcognates" + std::to_string(numCognates) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-sr-delta.nex", std::ofstream::out);
     
     double expectedNumberOfTips = 20.0;
     
-    for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
+    //for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
     
     for (double sharingRate = 0.0; sharingRate <= 1.0; sharingRate += 0.2) {
         
-        for (double ratio = 0.0; ratio <= 1.0; ratio += 0.2) {
+      //  for (double ratio = 0.0; ratio <= 1.0; ratio += 0.2) {
     
     //double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
@@ -169,8 +169,8 @@ int main(int argc, const char * argv[]) {
                 fw.close();
                 gw.close();
              }
-        }
-    }
+        //}
+    //}
     return 0;
 }
 
