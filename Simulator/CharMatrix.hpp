@@ -24,6 +24,7 @@ public:
     CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, int nc, double alphaRat, double alphaRes, double betaRes, double sharingRate, double delta, bool borrowNearTips);
     void print(void);
     std::string getString(void);
+    int getNumChar(void) { return numChar; }
 private:
     int numTaxa;
     int numChar;

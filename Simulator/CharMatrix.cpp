@@ -453,6 +453,9 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     std::vector<Node*> sourceNodes;
     std::vector<Node*> destNodes;
     
+    //t->addSharingEvents(&rng, internalSharingRate/subtreeLength, sourceNodes, delta);
+    //t->addExternalSharingEvents(&rng, externalSharingRate/subtreeLength, destNodes);
+    
     t->addSharingEvents(&rng, internalSharingRate/subtreeLength, sourceNodes, delta);
     t->addExternalSharingEvents(&rng, externalSharingRate/subtreeLength, destNodes);
     
