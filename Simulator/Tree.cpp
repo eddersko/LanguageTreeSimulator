@@ -387,7 +387,7 @@ std::vector<Node*> Tree::nodesAtTime(double time) {
 void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>& sourceNodes, double delta) {
         
     // insert nodes into tree at source points
-            
+    //int counter = 0;
     for (Node* n : downPassSequence) {
                         
         Node* nAncs = n->getAncestor();
@@ -401,6 +401,7 @@ void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>
                 nAncs = n->getAncestor();
                 
                 v += -log(rng->uniformRv())/rate;
+                
                 
                 if (v < len) {
                     Node* p = addNode();
@@ -416,6 +417,7 @@ void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>
                                             
                     Node* d = NULL;
                     p->setDest(d);
+                    //counter++;
                 }
             }
         }
@@ -425,7 +427,7 @@ void Tree::addSharingEvents(RandomVariable* rng, double rate, std::vector<Node*>
     
     //std::cout << "source node size: " << sourceNodes.size() << std::endl;
     // add destination nodes to tree
-    
+    //std::cout << "sourceNodes:" << counter << std::endl;
     for (Node* n : sourceNodes) {
         reindex();
         double nTime = n->getTime();

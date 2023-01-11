@@ -35,11 +35,11 @@ int main(int argc, const char * argv[]) {
     
     double expectedNumberOfTips = 20.0;
     
-    //for (double turnoverRate = 0.0; turnoverRate <= 1.0; turnoverRate += 0.2) {
+    // for (double turnoverRate = 0.0; turnoverRate <= 0.8; turnoverRate += 0.2) {
     
-    for (double sharingRate = 0.0; sharingRate <= 1.0; sharingRate += 0.2) {
+    for (double sharingRate = 0.0; sharingRate <= 1.0; sharingRate += 0.25) {
         
-      //  for (double ratio = 0.0; ratio <= 1.0; ratio += 0.2) {
+       // for (double ratio = 0.0; ratio <= 1.0; ratio += 0.2) {
     
     //double turnoverRate = 0.8; // mu over lambda
     double diversificationRate = log(expectedNumberOfTips) - log(2);
@@ -82,10 +82,10 @@ int main(int argc, const char * argv[]) {
             
     //std::map<Tree*, CharMatrix*> simulatedMatrices;
                     //
-            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/ext/" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
-            std::ofstream gw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/tr/" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
+            std::ofstream fw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/ext/Q_" + modelName +  "_treedist_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
+            std::ofstream gw("/Users/edwinko/Dropbox/Berkeley/Computational Phylolinguistics/borrowing/data/ext/Q_" + modelName +  "_brlen_numtaxa" + std::to_string(expectedNumberOfTips) + "-numcognates" + std::to_string(numCognates) + "-bf" + std::to_string(freqs[0]) + "_" + std::to_string(freqs[1]) + "-tr" + std::to_string(turnoverRate) + "-alphaR" + std::to_string(alphaR) + "-alphaS" + std::to_string(alphaS) + "-betaS" + std::to_string(betaS) + "-srRatio" + std::to_string(ratio)  + "-sr" + std::to_string(sharingRate) + "-delta.nex", std::ios::out);
                               
-                for (double delta = -10.0; delta <= 10.1; delta += 5) {
+                for (double delta = -10.0; delta <= 10.1; delta += 2.5) {
                     
                 int count = 1;
                 
@@ -109,7 +109,7 @@ int main(int argc, const char * argv[]) {
                     gw << "#NEXUS\n\n";
                     gw << "[!replicate " << std::to_string(count) << "]\n";
                     gw << "begin data;\n";
-                    gw << "dimensions nchar=" << std::to_string(numCognates) << " ntax=" << std::to_string(t1.getNumTaxa()) << ";\n";
+                    gw << "dimensions nchar=" << std::to_string(cm->getNumChar()) << " ntax=" << std::to_string(t1.getNumTaxa()) << ";\n";
                     gw << "format missing=? gap=- datatype=standard symbols=\"01\";\n";
                     gw << "Matrix\n\n";
                     
@@ -154,9 +154,9 @@ int main(int argc, const char * argv[]) {
                                             
                     if (count == 1)
                         
-                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate <<  "_delta" << delta << ".txt replace=yes format=altnex brLens=yes ;\n";
+                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/Q_" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate <<  "_delta" << delta << ".txt replace=yes format=altnex brLens=yes ;\n";
                     else
-                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate << "_delta" << delta << ".txt append=yes format=altnex brLens=yes ;\n";
+                        gw << std::fixed << std::setprecision(2) << "savetrees file=/Users/edwinko/Downloads/Q_" + modelName + "_brlen_result_numTaxa" << expectedNumberOfTips << "_nc" << numCognates << "_bf" << freqs[0] << "-" << freqs[1] << "_tr" << turnoverRate << "_alphaR" << alphaR << "_alphaS" << alphaS << "_betaS" << betaS << "_ratio" << ratio << "_sr" << sharingRate << "_delta" << delta << ".txt append=yes format=altnex brLens=yes ;\n";
                     gw << "end;\n";
                     
                     count++;
@@ -171,6 +171,7 @@ int main(int argc, const char * argv[]) {
              }
         //}
     //}
+    
     return 0;
 }
 

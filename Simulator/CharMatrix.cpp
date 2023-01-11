@@ -456,8 +456,8 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
     //t->addSharingEvents(&rng, internalSharingRate/subtreeLength, sourceNodes, delta);
     //t->addExternalSharingEvents(&rng, externalSharingRate/subtreeLength, destNodes);
     
-    t->addSharingEvents(&rng, internalSharingRate/subtreeLength, sourceNodes, delta);
-    t->addExternalSharingEvents(&rng, externalSharingRate/subtreeLength, destNodes);
+    t->addSharingEvents(&rng, internalSharingRate, sourceNodes, delta);
+    t->addExternalSharingEvents(&rng, externalSharingRate, destNodes);
     
     // simulate data
     numStates = ns;
@@ -558,7 +558,7 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
         for (int j = 0; j < numChar; j++) {
             double randomNumber = rng.uniformRv();
             if (randomNumber > resilience[j]) {
-                //std::cout << "Sharing between " << dest->getIndex() << " and " << sourceNodes[i]->getIndex() << " in site " << std::endl;
+                //std::cout << "Sharing between " << dest->getIndex() << " and " << sourceNodes[i]->getIndex() << " in site " << j << std::endl;
                                
                 (*dest->getCognateSet())[j] = (*sourceNodes[i]->getCognateSet())[j];
                 simulateSubTree(dest, dest, q, &rng, j);
@@ -592,10 +592,8 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                     if (dest->getCognateSet()->getNumCognates() == 0)
                         Msg::error("Number of cognates should not be 0.");
                                                             
-                    // this seems to work fine...
                     dest->getCognateSet()->incrementNumSites(1);
-                    
-                    // this probably works?
+                                        
                     addSitesToDescendants(dest, dest, 1);
                                         
                     int siteNum = dest->getCognateSet()->getNumCognates() - 1;
@@ -605,7 +603,7 @@ CharMatrix::CharMatrix(Tree* t, double** q, int ns, std::vector<double> freqs, i
                                                             
                     // get descendants of activeNodes and increment number of sites by one, set value to -1 (i.e. ?)
                     for (int k = 0; k < activeNodes.size(); k++) {
-                        activeNodes[k]->getCognateSet()->incrementNumSites(1);
+                        activeNodes[k]->getCognateSet()->incrementNumSites(-1);
                         addSitesToDescendants(activeNodes[k], activeNodes[k], -1);
                     }
                     
